@@ -1,0 +1,679 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SillyTavern - Login</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #1a1a2e, #16213e, #0f3460);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            color: #fff;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 500px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .logo-container {
+            text-align: center;
+            margin-bottom: 40px;
+            animation: fadeIn 1s ease-in-out;
+        }
+
+        .logo-container img {
+            width: 120px;
+            height: 120px;
+            margin-bottom: 20px;
+            filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.2));
+        }
+
+        .logo-container h1 {
+            font-size: 2.8rem;
+            font-weight: 700;
+            background: linear-gradient(to right, #ff7e5f, #feb47b);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+        }
+
+        .auth-container {
+            width: 100%;
+            background: rgba(80, 30, 46, 0.8);
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 15px 35px rgba(100, 0, 0, 0.5);
+            backdrop-filter: blur(10px);
+            animation: slideUp 0.8s ease-out;
+            padding: 40px;
+            min-height: 600px; /* 设置一个最小高度，根据实际情况调整 */
+        }
+
+        .tabs {
+            display: flex;
+            margin-bottom: 30px;
+            border-bottom: 1px solid #444;
+        }
+
+        .tab {
+            flex: 1;
+            text-align: center;
+            padding: 15px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .tab.active {
+            color: #feb47b;
+        }
+
+        .tab.active::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(to right, #ff7e5f, #feb47b);
+        }
+
+        .form-header {
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .form-header h2 {
+            font-size: 2rem;
+            margin-bottom: 10px;
+            color: #feb47b;
+        }
+
+        .form-header p {
+            color: #b0b0b0;
+        }
+
+        .form-container {
+            position: relative;
+        }
+
+        .form {
+            transition: all 0.4s ease;
+            position: absolute;
+            width: 100%;
+            opacity: 0;
+            transform: translateX(20px);
+            pointer-events: none;
+        }
+
+        .form.active {
+            opacity: 1;
+            transform: translateX(0);
+            pointer-events: all;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #e0e0e0;
+        }
+
+        .input-with-icon {
+            position: relative;
+        }
+
+        .input-with-icon i {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #feb47b;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 15px 15px 15px 50px;
+            border: none;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.08);
+            color: #fff;
+            font-size: 1rem;
+            transition: all 0.3s;
+            border: 1px solid transparent;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: #feb47b;
+            background: rgba(255, 255, 255, 0.12);
+            box-shadow: 0 0 0 3px rgba(254, 180, 123, 0.2);
+        }
+
+        .btn {
+            width: 100%;
+            padding: 15px;
+            border: none;
+            border-radius: 8px;
+            background: linear-gradient(to right, #ff7e5f, #feb47b);
+            color: white;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 10px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 7px 14px rgba(0, 0, 0, 0.25);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .form-footer {
+            text-align: center;
+            margin-top: 25px;
+            color: #b0b0b0;
+            font-size: 0.9rem;
+        }
+
+        .form-footer a {
+            color: #feb47b;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+
+        .form-footer a:hover {
+            text-decoration: underline;
+        }
+
+        .remember-forgot {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .remember {
+            display: flex;
+            align-items: center;
+        }
+
+        .remember input {
+            margin-right: 8px;
+        }
+
+        .forgot-password {
+            color: #feb47b;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+
+        .forgot-password:hover {
+            text-decoration: underline;
+        }
+
+        .status-bar {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            text-align: center;
+            display: none;
+        }
+
+        .status-bar.success {
+            background: rgba(46, 204, 113, 0.2);
+            border: 1px solid #2ecc71;
+            color: #2ecc71;
+        }
+
+        .status-bar.error {
+            background: rgba(231, 76, 60, 0.2);
+            border: 1px solid #e74c3c;
+            color: #e74c3c;
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (max-width: 480px) {
+            .logo-container h1 {
+                font-size: 1.8rem;
+            }
+
+            .auth-container {
+                padding: 30px 20px;
+            }
+
+            .tab {
+                padding: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="logo-container">
+
+        <h1>SillyTavern</h1>
+    </div>
+
+    <div class="auth-container">
+        <div class="tabs">
+            <div class="tab active" data-tab="login">Login</div>
+            <div class="tab" data-tab="register">Register</div>
+        </div>
+
+        <div class="form-container">
+            <!-- Login Form -->
+            <form class="form active" id="loginForm">
+                <div class="status-bar" id="loginStatus"></div>
+
+                <div class="form-group">
+                    <label for="userName">Username</label>
+                    <div class="input-with-icon">
+                        <i class="fas fa-user"></i>
+                        <input type="text" id="userName" class="form-control" placeholder="Enter your username" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="userPassword">Password</label>
+                    <div class="input-with-icon">
+                        <i class="fas fa-lock"></i>
+                        <input type="password" id="userPassword" class="form-control" placeholder="Enter your password" required>
+                    </div>
+                </div>
+
+                <div class="remember-forgot">
+                    <div class="remember">
+                        <input type="checkbox" id="rememberMe">
+                        <label for="rememberMe">Remember me</label>
+                    </div>
+                    <a href="#" id="recoverPassword" class="forgot-password">Forgot password?</a>
+                </div>
+
+                <button type="submit" class="btn">Login</button>
+
+                <div class="form-footer">
+                    <p>Don't have an account? <a href="#" id="switchToRegister">Register now</a></p>
+                </div>
+            </form>
+
+            <!-- Register Form -->
+            <form class="form" id="registerForm">
+                <div class="status-bar" id="registerStatus"></div>
+
+                <div class="form-group">
+                    <label for="registerUsername">Username</label>
+                    <div class="input-with-icon">
+                        <i class="fas fa-at"></i>
+                        <input type="text" id="registerUsername" class="form-control" placeholder="Choose a username" required>
+                    </div>
+                </div>
+
+
+
+                <div class="form-group">
+                    <label for="registerPassword">Password</label>
+                    <div class="input-with-icon">
+                        <i class="fas fa-lock"></i>
+                        <input type="password" id="registerPassword" class="form-control" placeholder="Create a password" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="registerConfirmPassword">Confirm Password</label>
+                    <div class="input-with-icon">
+                        <i class="fas fa-lock"></i>
+                        <input type="password" id="registerConfirmPassword" class="form-control" placeholder="Confirm your password" required>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn">Create Account</button>
+
+                <div class="form-footer">
+                    <p>Already have an account? <a href="#" id="switchToLogin">Sign in now</a></p>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    // CRSF token for requests.
+    let csrfToken = '';
+
+    /**
+     * Gets a CSRF token from the server.
+     * @returns {Promise<string>} CSRF token
+     */
+    async function getCsrfToken() {
+        const response = await fetch('/csrf-token');
+        const data = await response.json();
+        return data.token;
+    }
+
+    async function slugify(text) {
+        try {
+            const response = await fetch('/api/users/slugify', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-Token': csrfToken,
+                },
+                body: JSON.stringify({ text }),
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to slugify text');
+            }
+
+            return response.text();
+        } catch (error) {
+            console.error('Error slugifying text:', error);
+            return text;
+        }
+    }
+
+    /**
+     * Attempts to log in the user.
+     * @param {string} handle User's handle
+     * @param {string} password User's password
+     * @returns {Promise<void>}
+     */
+    async function performLogin(handle, password) {
+        const loginStatus = document.getElementById('loginStatus');
+        loginStatus.textContent = 'Logging in...';
+        loginStatus.className = 'status-bar success';
+        loginStatus.style.display = 'block';
+
+        const userInfo = {
+            handle: handle,
+            password: password,
+        };
+
+        try {
+
+            const response = await fetch('/api/users/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-Token': csrfToken,
+                },
+                body: JSON.stringify(userInfo),
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.error || 'Login failed');
+            }
+
+            const data = await response.json();
+            localStorage.setItem('uid', data.uid);
+            if (data.handle) {
+                loginStatus.textContent = 'Login successful! Redirecting...';
+                redirectToHome();
+            }
+        } catch (error) {
+            console.error('Error logging in:', error);
+            loginStatus.textContent = error.message;
+            loginStatus.className = 'status-bar error';
+            loginStatus.style.display = 'block';
+        }
+    }
+
+    /**
+     * Requests a recovery code for the user.
+     * @param {string} handle User handle
+     * @returns {Promise<void>}
+     */
+    async function sendRecoveryPart1(handle) {
+        const loginStatus = document.getElementById('loginStatus');
+        loginStatus.textContent = 'Sending recovery code...';
+        loginStatus.className = 'status-bar success';
+        loginStatus.style.display = 'block';
+
+        try {
+            const response = await fetch('/api/users/recover-step1', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-Token': csrfToken,
+                },
+                body: JSON.stringify({ handle }),
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.error || 'Recovery failed');
+            }
+
+            loginStatus.textContent = 'Recovery code sent. Please check your email.';
+        } catch (error) {
+            console.error('Error sending recovery:', error);
+            loginStatus.textContent = error.message;
+            loginStatus.className = 'status-bar error';
+            loginStatus.style.display = 'block';
+        }
+    }
+
+    /**
+     * Redirects the user to the home page.
+     */
+    function redirectToHome() {
+        setTimeout(() => {
+            window.location.href = '/';
+        }, 1500);
+    }
+
+    // Initialize the page
+    (async function () {
+        csrfToken = await getCsrfToken();
+
+        // DOM elements
+        const loginForm = document.getElementById('loginForm');
+        const registerForm = document.getElementById('registerForm');
+        const loginTab = document.querySelector('[data-tab="login"]');
+        const registerTab = document.querySelector('[data-tab="register"]');
+        const switchToRegister = document.getElementById('switchToRegister');
+        const switchToLogin = document.getElementById('switchToLogin');
+
+        // Tab switching
+        function switchToTab(tabName) {
+            if (tabName === 'login') {
+                loginTab.classList.add('active');
+                registerTab.classList.remove('active');
+                loginForm.classList.add('active');
+                registerForm.classList.remove('active');
+            } else {
+                registerTab.classList.add('active');
+                loginTab.classList.remove('active');
+                registerForm.classList.add('active');
+                loginForm.classList.remove('active');
+            }
+        }
+
+        // Event listeners for tab switching
+        loginTab.addEventListener('click', () => switchToTab('login'));
+        registerTab.addEventListener('click', () => switchToTab('register'));
+        switchToRegister.addEventListener('click', (e) => {
+            e.preventDefault();
+            switchToTab('register');
+        });
+        switchToLogin.addEventListener('click', (e) => {
+            e.preventDefault();
+            switchToTab('login');
+        });
+
+        // Set up login form submission
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const name = document.getElementById('userName').value;
+            const password = document.getElementById('userPassword').value;
+
+            if (!name || !password) {
+                const loginStatus = document.getElementById('loginStatus');
+                loginStatus.textContent = 'Please fill in all fields';
+                loginStatus.className = 'status-bar error';
+                loginStatus.style.display = 'block';
+                return;
+            }
+
+            await performLogin(name, password);
+        });
+
+        // Set up password recovery
+        const recoverPassword = document.getElementById('recoverPassword');
+        recoverPassword.addEventListener('click', async (e) => {
+            e.preventDefault();
+            const name = document.getElementById('userName').value;
+
+            if (!name) {
+                const loginStatus = document.getElementById('loginStatus');
+                loginStatus.textContent = 'Please enter your username or email';
+                loginStatus.className = 'status-bar error';
+                loginStatus.style.display = 'block';
+                return;
+            }
+
+            await sendRecoveryPart1(name);
+        });
+
+        // Set up register form submission (placeholder)
+        // 设置注册表单提交
+        registerForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const registerStatus = document.getElementById('registerStatus');
+
+            // 获取表单数据
+            const username = document.getElementById('registerUsername').value;
+            const password = document.getElementById('registerPassword').value;
+            const confirmPassword = document.getElementById('registerConfirmPassword').value;
+            const handle = await slugify(String(username))
+
+
+            // 简单验证
+            if (!username || !password || !confirmPassword) {
+                registerStatus.textContent = '请填写所有字段';
+                registerStatus.className = 'status-bar error';
+                registerStatus.style.display = 'block';
+                return;
+            }
+
+            if (password !== confirmPassword) {
+                registerStatus.textContent = '密码不匹配';
+                registerStatus.className = 'status-bar error';
+                registerStatus.style.display = 'block';
+                return;
+            }
+
+            if (password.length < 6) {
+                registerStatus.textContent = '密码长度至少6位';
+                registerStatus.className = 'status-bar error';
+                registerStatus.style.display = 'block';
+                return;
+            }
+
+            // 显示注册中状态
+            registerStatus.textContent = '正在创建账户...';
+            registerStatus.className = 'status-bar success';
+            registerStatus.style.display = 'block';
+
+            // 创建FormData对象
+            const formData = new FormData();
+            formData.append('handle', username);
+            formData.append('password', password);
+            formData.append('confirm', confirmPassword);
+
+            try {
+                // 调用createUser函数
+                const response = await fetch('/api/users/create', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-Token': csrfToken,
+                    },
+                    body: JSON.stringify({
+                        name:username,
+                        handle: handle,
+                        password: password
+                    }),
+                });
+
+                if (!response.ok) {
+                    const data = await response.json();
+                    throw new Error(data.error || '注册失败');
+                }
+
+                // 注册成功处理
+                registerStatus.textContent = '账户创建成功！正在跳转到登录...';
+                registerStatus.className = 'status-bar success';
+                registerStatus.style.display = 'block';
+
+                setTimeout(() => {
+                    switchToTab('login');
+                    // 自动填充登录表单
+                    document.getElementById('userName').value = handle;
+                    document.getElementById('userPassword').value = password;
+
+                }, 2000);
+            } catch (error) {
+                console.error('注册错误:', error);
+                registerStatus.textContent = error.message;
+                registerStatus.className = 'status-bar error';
+                registerStatus.style.display = 'block';
+            }
+        });
+
+        // Handle Enter key press
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' && document.activeElement.tagName === 'INPUT') {
+                const activeForm = document.querySelector('.form.active');
+                if (activeForm) {
+                    activeForm.dispatchEvent(new Event('submit'));
+                }
+            }
+        });
+    })();
+</script>
+</body>
+</html>
