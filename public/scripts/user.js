@@ -743,13 +743,11 @@ async function livePlayPanel() {
         toastr.error('请先登录');
         return;
     }
-    console.log("*****")
-    console.log(getUid())
-    console.log(currentUser.name)
+
     try {
-        // 获取直播状态数据 - 改为 GET 请求
+        // 获取直播状态数据
         const response = await axios.get('http://43.162.120.233:8000/api/live/get_live_status', {
-            params: {  // GET 请求参数放在 params 中
+            params: {
                 uid: getUid(),
                 username: currentUser.name
             },
@@ -768,9 +766,12 @@ async function livePlayPanel() {
         // 添加标题
         liveListTemplate.append('<h3 style="text-align: center; margin-bottom: 20px;">角色直播管理</h3>');
 
-        // 创建表格并添加样式
-        const table = $('<table class="liveTable" style="width: 100%; border-collapse: collapse; margin-bottom: 20px;"></table>');
-        table.append('<thead><tr><th style="padding: 12px; background: #2c3e50; color: white;">角色名称</th><th style="padding: 12px; background: #2c3e50; color: white;">直播状态</th><th style="padding: 12px; background: #2c3e50; color: white;">操作</th></tr></thead>');
+        // 创建带滚动条的容器
+        const scrollContainer = $('<div style="max-height: 500px; overflow-y: auto; margin-bottom: 15px;"></div>');
+
+        // 创建表格
+        const table = $('<table class="liveTable" style="width: 100%; border-collapse: collapse;"></table>');
+        table.append('<thead><tr><th style="position: sticky; top: 0; padding: 12px; background: #2c3e50; color: white; z-index: 10;">角色名称</th><th style="position: sticky; top: 0; padding: 12px; background: #2c3e50; color: white; z-index: 10;">直播状态</th><th style="position: sticky; top: 0; padding: 12px; background: #2c3e50; color: white; z-index: 10;">操作</th></tr></thead>');
 
         const tbody = $('<tbody></tbody>');
 
@@ -797,17 +798,17 @@ async function livePlayPanel() {
                 try {
                     button.prop('disabled', true).text('处理中...');
 
-                    // 更新直播状态 - 改为 GET 请求
-                    const updateResponse = await axios.get(
+                    // 更新直播状态
+                    const updateResponse = await axios.post(
                         'http://43.162.120.233:8000/api/live/change_live_status',
+                        new URLSearchParams({
+                            uid: currentUser.uid,
+                            character_name: item.character_name,
+                            live_status: newStatus ? "start" : "stop"
+                        }),
                         {
-                            params: {  // GET 请求参数
-                                uid: currentUser.uid,
-                                character_name: characterName,
-                                live_status: newStatus ? "start" : "stop"
-                            },
                             timeout: 5000,
-                            headers: {'Content-Type': 'application/json'}
+                            headers: {'Content-Type': 'application/x-www-form-urlencoded'}
                         }
                     );
 
@@ -838,10 +839,11 @@ async function livePlayPanel() {
         });
 
         table.append(tbody);
-        liveListTemplate.append(table);
+        scrollContainer.append(table);  // 将表格放入滚动容器
+        liveListTemplate.append(scrollContainer);  // 将滚动容器添加到模板
 
-        // 添加刷新按钮
-        const refreshButton = $('<button class="refreshLiveStatus" style="padding: 8px 16px; background: #3498db; color: white; border: none; border-radius: 4px; cursor: pointer; float: right;">刷新状态</button>');
+        // 添加刷新按钮（放在滚动容器外）
+        const refreshButton = $('<button class="refreshLiveStatus" style="padding: 8px 16px; background: #3498db; color: white; border: none; border-radius: 4px; cursor: pointer; float: right; margin-top: 10px;">刷新状态</button>');
         refreshButton.on('click', async () => {
             refreshButton.text('刷新中...').prop('disabled', true);
             await livePlayPanel();
